@@ -1,7 +1,13 @@
+// context/InformacionProvider.js
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "../hooks/useForm";
 import { InformacionContext } from "./InformacionContext";
 import PropTypes from "prop-types";
+import {
+  getAllInformacion,
+  getInformacionByTramite,
+  getInformacionById,
+} from "../services/informacionServices";
 
 export const InformacionProvider = ({ children }) => {
   const [allInformacion, setAllInformacion] = useState([]);
@@ -16,31 +22,13 @@ export const InformacionProvider = ({ children }) => {
     children: PropTypes.node.isRequired,
   };
 
-  const getAllInformacion = async () => {
-    const baseURL = "http://localhost:5000/ctram-informacion";
-    const response = await fetch(`${baseURL}`);
-    const data = await response.json();
-    setAllInformacion(data);
-    setLoading(false);
-  };
-
-  const getInformacionByTramite = async (id) => {
-    const baseURL = "http://localhost:5000/ctram-informacion/InfoTramite";
-    const response = await fetch(`${baseURL}/${id}`);
-    const data = await response.json();
-    return data; // Ahora devuelve los trámites en lugar de modificar un estado global
-  };
-
-  const getInformacionById = async (id) => {
-    const baseURL = "http://localhost:5000/ctram-informacion";
-    // buscamos el tramite por id
-    const response = await fetch(`${baseURL}/${id}`);
-    const data = await response.json();
-    return data;
-  };
-
   useEffect(() => {
-    getAllInformacion();
+    const fetchData = async () => {
+      const data = await getAllInformacion();
+      setAllInformacion(data);
+      setLoading(false);
+    };
+    fetchData();
   }, []);
 
   const contextValue = useMemo(
@@ -48,19 +36,16 @@ export const InformacionProvider = ({ children }) => {
       allInformacion,
       getInformacionByTramite,
       getInformacionById,
-      getAllInformacion,
+      getAllInformacion: async () => {
+        const data = await getAllInformacion();
+        setAllInformacion(data);
+      },
       loading,
       valueSearch,
       onInputChange,
       onResetForm,
     }),
-    [
-      allInformacion,
-      loading,
-      valueSearch,
-      onInputChange,
-      onResetForm,
-    ]
+    [allInformacion, loading, valueSearch, onInputChange, onResetForm]
   );
 
   return (
