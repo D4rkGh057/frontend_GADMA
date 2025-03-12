@@ -1,7 +1,13 @@
-import React from 'react';
-import { StaticRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
-import { Navigation } from './components/Navigation';
-import { Inicio, TramitePage } from "./pages";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
+import { Navigation } from "./components/Navigation";
+import { Inicio, TramitePage, SearchPage } from "./pages";
+import { InformacionProvider } from "./context/InformacionProvider";
 
 export const AppRouter = () => {
   return (
@@ -9,7 +15,15 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/" element={<Navigation />}>
           <Route index element={<Inicio />} />
-          <Route path="tramite/:id" element={<TramitePage />} />
+          <Route
+            path="tramite/:id"
+            element={
+              <InformacionProvider>
+                <TramitePage />
+              </InformacionProvider>
+            }
+          />
+          <Route path="search" element={<SearchPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
