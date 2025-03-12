@@ -1,19 +1,13 @@
 import React from "react";
-import TramiteList from "../components/TramiteList";
+import DireccionList from "../components/DireccionList";
 
 export const Inicio = () => {
-
   return (
     <>
-      
-      <p
-        id="Titulo"
-        className="flex-auto text-center text-2xl p-5 font-bold text-neutral-700"
-      >
+      <h1 className="flex-auto text-center text-2xl p-5 font-bold text-neutral-700">
         Trámites
-      </p>
-      
-      <TramiteList/>
+      </h1>
+      <DireccionList />
     </>
   );
 };
