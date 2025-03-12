@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "../hooks/useForm";
 import { TramitesContext } from "./TramitesContext";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 export const TramitesProvider = ({ children }) => {
   const [allTramites, setAllTramites] = useState([]);
@@ -25,6 +24,13 @@ export const TramitesProvider = ({ children }) => {
     setLoading(false);
   };
 
+  const getTramitesByDirection = async (id) => {
+    const baseURL = "http://localhost:5000/ctram-tramite/Direccion";
+    const response = await fetch(`${baseURL}/${id}`);
+    const data = await response.json();
+    return data; // Ahora devuelve los trámites en lugar de modificar un estado global
+  };
+
   const getTramiteById = async (id) => {
     const baseURL = "http://localhost:5000/ctram-tramite";
     // buscamos el tramite por id
@@ -40,14 +46,21 @@ export const TramitesProvider = ({ children }) => {
   const contextValue = useMemo(
     () => ({
       allTramites,
+      getTramitesByDirection,
       getTramiteById,
       getAllTramites,
+      loading,
+      valueSearch: valueSearch || "",
+      onInputChange,
+      onResetForm,
+    }),
+    [
+      allTramites,
       loading,
       valueSearch,
       onInputChange,
       onResetForm,
-    }),
-    [allTramites, loading, valueSearch, onInputChange, onResetForm]
+    ]
   );
 
   return (
