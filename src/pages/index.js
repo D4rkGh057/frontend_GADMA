@@ -1,3 +1,6 @@
 export * from './Inicio'
 export * from './TramitePage'
 export * from './SearchPage'
+export * from './Login'
+export * from './Register'
+export * from './ForgotPassword'

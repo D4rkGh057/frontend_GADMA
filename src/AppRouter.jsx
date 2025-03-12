@@ -6,7 +6,14 @@ import {
   Routes,
 } from "react-router-dom";
 import { Navigation } from "./components/Navigation";
-import { Inicio, TramitePage, SearchPage } from "./pages";
+import {
+  Inicio,
+  TramitePage,
+  SearchPage,
+  Login,
+  Register,
+  ForgotPassword,
+} from "./pages";
 import { InformacionProvider } from "./context/InformacionProvider";
 
 export const AppRouter = () => {
@@ -24,6 +31,9 @@ export const AppRouter = () => {
             }
           />
           <Route path="search" element={<SearchPage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="registro" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
