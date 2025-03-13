@@ -12,13 +12,13 @@ export const AuthProvider = ({ children }) => {
     // Función para iniciar sesión
     const login = (userData) => {
       setUser(userData); // Guardar datos del usuario
-      localStorage.setItem("user", JSON.stringify(userData)); // Guardar en localStorage
     };
   
     // Función para cerrar sesión
     const logout = () => {
       setUser(null); // Eliminar datos del usuario
-      localStorage.removeItem("user"); // Eliminar del localStorage
+      
+      sessionStorage.removeItem("user"); // Eliminar del sessionStorage
     };
 
     const contextValue = useMemo(

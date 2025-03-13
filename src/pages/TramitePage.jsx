@@ -28,7 +28,7 @@ export const TramitePage = () => {
       const data = await getInformacionByTramite(id);
       // Filtrar los datos
       const adicionales = data.filter((item) => item.tipo === "Adicional");
-      const informacion = data.filter((item) => item.tipo === "Informacion");
+      const informacion = data.filter((item) => item.tipo === "Nota");
       setAdicional(adicionales);
       setNotas(informacion);
     } catch (error) {

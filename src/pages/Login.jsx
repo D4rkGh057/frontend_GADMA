@@ -1,13 +1,22 @@
 import React, { useState } from "react";
-import fondo from "../assets/municipalidadSUR1.png"; // Importa la imagen
-
+import fondo from "../assets/municipalidadSUR1.webp"; // Importa la imagen
+import { getUserFromToken, login } from "../services/authServices";
+import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     // Aquí puedes agregar la lógica para manejar el inicio de sesión
-    console.log("Formulario enviado");
+    const cedula = e.target.cedula.value;
+    const password = e.target.password.value;
+    login(cedula, password).then((data) => {
+      sessionStorage.setItem("token", data.access_token);
+      //Desencriptar el token y obtener el usuario
+      const user = getUserFromToken(data.access_token);
+      sessionStorage.setItem("user", JSON.stringify(user));
+    });
+    navigate("/"); // Redirige al usuario a la página de inicio
   };
 
   const togglePasswordVisibility = () => {
@@ -51,7 +60,7 @@ export const Login = () => {
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
-              placeholder="Crea una contraseña"
+              placeholder="Ingresa tu contraseña"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -105,7 +114,7 @@ export const Login = () => {
             Iniciar Sesión
           </button>
         </form>
-        <div className="mt-6 text-center">
+        {/* <div className="mt-6 text-center">
           <p className="text-gray-600">
             ¿No tienes una cuenta?{" "}
             <a
@@ -123,7 +132,7 @@ export const Login = () => {
           >
             Olvidaste tu contraseña?
           </a>
-        </div>
+        </div> */}
       </div>
     </div>
   );

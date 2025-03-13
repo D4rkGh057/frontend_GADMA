@@ -11,8 +11,12 @@ import {
   TramitePage,
   SearchPage,
   Login,
-  Register,
-  ForgotPassword,
+  AdminPanel,
+  FormatosCRUD,
+  InformacionCRUD,
+  RequisitosCRUD,
+  TramitesCRUD,
+  UsersCRUD,
 } from "./pages";
 import { InformacionProvider } from "./context/InformacionProvider";
 
@@ -32,8 +36,12 @@ export const AppRouter = () => {
           />
           <Route path="search" element={<SearchPage />} />
           <Route path="login" element={<Login />} />
-          <Route path="registro" element={<Register />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="admin-panel" element={<AdminPanel />} />
+          <Route path="admin-panel/users" element={<UsersCRUD />} />
+          <Route path="admin-panel/tramites" element={<TramitesCRUD />} />
+          <Route path="admin-panel/requisitos" element={<RequisitosCRUD />} />
+          <Route path="admin-panel/informacion" element={<InformacionCRUD />} />
+          <Route path="admin-panel/formatos" element={<FormatosCRUD />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

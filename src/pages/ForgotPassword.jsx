@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import fondo from "../assets/municipalidadSUR1.png"; // Importa la misma imagen de fondo
+import fondo from "../assets/municipalidadSUR1.webp"; // Importa la misma imagen de fondo
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState(""); // Estado para el correo electrónico

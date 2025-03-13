@@ -1,20 +1,38 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TramitesContext } from "../context/TramitesContext";
+import { isTokenValid } from "../services/authServices";
 
 export const Navbar = () => {
-  const { onInputChange, valueSearch, onResetForm } =
-    useContext(TramitesContext);
-
+  const { onInputChange, valueSearch, onResetForm } = useContext(TramitesContext);
+  const [loggedIn, setLoggedIn] = useState(false); // Estado para verificar si el usuario está autenticado
   const navigate = useNavigate();
 
+  // Efecto para verificar la validez del token al cargar el componente
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token && isTokenValid(token)) {
+      setLoggedIn(true); // Si el token es válido, el usuario está autenticado
+    } else {
+      setLoggedIn(false); // Si el token no es válido, el usuario no está autenticado
+    }
+  }, []); // El efecto se ejecuta solo al montar el componente
+
+  // Función para manejar la búsqueda
   const onSearchSubmit = (e) => {
     e.preventDefault();
     navigate("/search", {
       state: valueSearch,
     });
-
     onResetForm();
+  };
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    sessionStorage.removeItem("token"); // Elimina el token de sessionStorage
+    sessionStorage.removeItem("user"); // Elimina el usuario de sessionStorage
+    setLoggedIn(false); // Actualiza el estado a "no autenticado"
+    navigate("/login"); // Redirige al usuario a la página de inicio de sesión
   };
 
   return (
@@ -22,7 +40,7 @@ export const Navbar = () => {
       <div className="flex-1">
         <button
           className="text-xl font-bold text-base-200"
-          onClick={() => (window.location.href = "/")}
+          onClick={() => navigate("/")} // Usa navigate en lugar de window.location.href
         >
           SmarTramites
         </button>
@@ -49,7 +67,7 @@ export const Navbar = () => {
             <input
               type="search"
               name="valueSearch"
-              placeholder="Buscar tramite"
+              placeholder="Buscar trámite"
               value={valueSearch || ""} // Si valueSearch es undefined, usa una cadena vacía
               onChange={onInputChange}
             />
@@ -80,18 +98,24 @@ export const Navbar = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
-            <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a>Logout</a>
-            </li>
+            {loggedIn ? (
+              <>
+                <li>
+                  <a className="justify-between" href="/admin-panel">
+                    Panel de Control
+                  </a>
+                </li>
+                <li>
+                  <button onClick={handleLogout}>Cerrar Sesión</button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <a className="justify-between" href="/login">
+                  Iniciar Sesión
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       </div>
