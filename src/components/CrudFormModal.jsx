@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 
 const CrudFormModal = ({
@@ -8,14 +8,13 @@ const CrudFormModal = ({
   fields,
   currentItem,
   onSubmit,
-  cascadingFilters = {}, // Prop para filtrado en cascada
-  conditionalFields = {}, // Prop para campos condicionales
+  cascadingFilters = {},
+  conditionalFields = {},
 }) => {
-  const [selectedValues, setSelectedValues] = useState({}); // Estado para valores seleccionados
-  const [filteredOptions, setFilteredOptions] = useState({}); // Estado para opciones filtradas
-  const [visibleFields, setVisibleFields] = useState({}); // Estado para campos visibles
+  const [selectedValues, setSelectedValues] = useState({});
+  const [filteredOptions, setFilteredOptions] = useState({});
+  const [visibleFields, setVisibleFields] = useState({});
 
-  // Obtener el valor por defecto de un campo
   const getDefaultValue = (fieldName) => {
     const fieldNames = fieldName.split(".");
     let value = currentItem;
@@ -27,11 +26,14 @@ const CrudFormModal = ({
     return value || "";
   };
 
-  // Efecto para aplicar filtros en cascada
+  // Memoize the cascadingFilters and conditionalFields to avoid unnecessary re-renders
+  const memoizedCascadingFilters = useMemo(() => cascadingFilters, [cascadingFilters]);
+  const memoizedConditionalFields = useMemo(() => conditionalFields, [conditionalFields]);
+
   useEffect(() => {
     const newFilteredOptions = { ...filteredOptions };
 
-    Object.entries(cascadingFilters).forEach(([targetField, sourceField]) => {
+    Object.entries(memoizedCascadingFilters).forEach(([targetField, sourceField]) => {
       const sourceValue = selectedValues[sourceField];
       if (sourceValue) {
         const targetFieldConfig = fields.find((field) => field.name === targetField);
@@ -45,22 +47,26 @@ const CrudFormModal = ({
       }
     });
 
-    setFilteredOptions(newFilteredOptions);
-  }, [selectedValues, cascadingFilters, fields]);
+    // Only update state if the filtered options have changed
+    if (JSON.stringify(newFilteredOptions) !== JSON.stringify(filteredOptions)) {
+      setFilteredOptions(newFilteredOptions);
+    }
+  }, [selectedValues, memoizedCascadingFilters, fields, filteredOptions]);
 
-  // Efecto para manejar la visibilidad de campos condicionales
   useEffect(() => {
     const newVisibleFields = { ...visibleFields };
 
-    Object.entries(conditionalFields).forEach(([targetField, condition]) => {
+    Object.entries(memoizedConditionalFields).forEach(([targetField, condition]) => {
       const sourceValue = selectedValues[condition.sourceField];
       newVisibleFields[targetField] = condition.values.includes(sourceValue);
     });
 
-    setVisibleFields(newVisibleFields);
-  }, [selectedValues, conditionalFields]);
+    // Only update state if the visible fields have changed
+    if (JSON.stringify(newVisibleFields) !== JSON.stringify(visibleFields)) {
+      setVisibleFields(newVisibleFields);
+    }
+  }, [selectedValues, memoizedConditionalFields, visibleFields]);
 
-  // Manejar cambios en los campos
   const handleChange = (fieldName, value) => {
     setSelectedValues((prev) => ({ ...prev, [fieldName]: value }));
   };
@@ -73,7 +79,6 @@ const CrudFormModal = ({
         </h2>
         <form onSubmit={onSubmit}>
           {fields.map((field) => {
-            // Ocultar el campo si no es visible
             if (conditionalFields[field.name] && !visibleFields[field.name]) {
               return null;
             }
@@ -151,8 +156,8 @@ CrudFormModal.propTypes = {
   ).isRequired,
   currentItem: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
-  cascadingFilters: PropTypes.object, // Nueva prop para filtrado en cascada
-  conditionalFields: PropTypes.object, // Nueva prop para campos condicionales
+  cascadingFilters: PropTypes.object,
+  conditionalFields: PropTypes.object,
 };
 
 export default CrudFormModal;
