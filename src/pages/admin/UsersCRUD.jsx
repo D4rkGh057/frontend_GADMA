@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CrudTable from "../../components/CrudTable";
 import CrudFormModal from "../../components/CrudFormModal"; // Importa el modal
-import { getAllUsers, createUser, updateUser, deleteUser } from "../../services/usuariosServices";
+import {
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../../services/usuariosServices";
 
 export const UsersCRUD = () => {
   const [users, setUsers] = useState([]);
@@ -29,8 +34,19 @@ export const UsersCRUD = () => {
     { name: "correo", label: "Correo", type: "email", required: true },
     { name: "nombre", label: "Nombre", type: "text", required: true },
     { name: "apellido", label: "Apellido", type: "text", required: true },
-    {name:"fecha_nacimiento" , label:"Fecha de Nacimiento", type:"date", required:true},
-    {name:"password", label:"Contraseña", type:"password", required:true},
+    {
+      name: "fecha_nacimiento",
+      label: "Fecha de Nacimiento",
+      type: "date",
+      required: true,
+    },
+    {
+      name: "password",
+      label: "Contraseña",
+      type: "password",
+      required: true,
+      editable: false,
+    },
   ];
 
   //Campos de la tabla
@@ -41,7 +57,6 @@ export const UsersCRUD = () => {
     { name: "apellido", label: "Apellido", type: "text", required: true },
     { name: "rol", label: "Rol", type: "text", required: true },
   ];
-
 
   // Función para guardar (crear/editar)
   const handleSave = async (item, isEditing) => {
@@ -76,7 +91,11 @@ export const UsersCRUD = () => {
 
   // Función para abrir el modal de edición
   const handleEdit = (item) => {
-    setCurrentItem(item); // Establecer el ítem actual
+    const transformedItem = {
+      ...item,
+      fecha_nacimiento: new Date(item.fecha_nacimiento).toISOString().split("T")[0],
+    };
+    setCurrentItem(transformedItem); // Establecer el ítem actual
     setIsEditing(true); // Indicar que estamos en modo edición
     setIsModalOpen(true); // Abrir el modal
   };
