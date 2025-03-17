@@ -24,6 +24,7 @@ export const createUser = async (user) => {
 
 // Actualizar un usuario existente
 export const updateUser = async (cedula_ruc, user) => {
+  console.log("Actualizando usuario:", cedula_ruc, user);
   const response = await fetch(`${API_URL}/ctram-usuario/${cedula_ruc}`, {
     method: "PATCH",
     headers: {

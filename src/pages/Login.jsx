@@ -1,23 +1,32 @@
 import React, { useState } from "react";
 import fondo from "../assets/municipalidadSUR1.webp"; // Importa la imagen
-import { getUserFromToken, login } from "../services/authServices";
+import { getRoleFromToken, getUserFromToken, login } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión
-    const cedula = e.target.cedula.value;
-    const password = e.target.password.value;
-    login(cedula, password).then((data) => {
-      sessionStorage.setItem("token", data.access_token);
-      //Desencriptar el token y obtener el usuario
-      const user = getUserFromToken(data.access_token);
-      sessionStorage.setItem("user", JSON.stringify(user));
-    });
-    navigate("/"); // Redirige al usuario a la página de inicio
-  };
+  
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  const cedula = e.target.cedula.value;
+  const password = e.target.password.value;
+
+  try {
+    const data = await login(cedula, password);
+    sessionStorage.setItem("token", data.access_token);
+
+    const user = getUserFromToken(data.access_token);
+    sessionStorage.setItem("user", JSON.stringify(user));
+
+    const rol = getRoleFromToken(data.access_token);
+    sessionStorage.setItem("rol", JSON.stringify(rol));
+
+    navigate("/admin-panel");
+  } catch (error) {
+    console.error("Login failed:", error);
+    alert("Credenciales incorrectas. Por favor, intenta de nuevo.");
+  }
+};
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

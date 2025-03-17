@@ -1,19 +1,24 @@
-const token = sessionStorage.getItem("token"); // Obtén el token del localStorage o sessionStorage
+const token = sessionStorage.getItem("token");
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const getAllLinks = async () => {
   const response = await fetch(`${API_URL}/ctram-links`);
+  if (!response.ok) {
+    throw new Error(`Error fetching links: ${response.statusText}`);
+  }
   const data = await response.json();
   return data;
 };
 
 export const getLinksById = async (id) => {
   const response = await fetch(`${API_URL}/ctram-links/${id}`);
+  if (!response.ok) {
+    throw new Error(`Error fetching link by ID: ${response.statusText}`);
+  }
   const data = await response.json();
   return data;
 };
 
-// Crear un nuevo link
 export const createLinks = async (links) => {
   const response = await fetch(`${API_URL}/ctram-links`, {
     method: "POST",
@@ -22,12 +27,15 @@ export const createLinks = async (links) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(links),
-    });
-    const data = await response.json();
-    return data;
-}
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error creating links: ${response.statusText}, ${errorText}`);
+  }
+  const data = await response.json();
+  return data;
+};
 
-// Actualizar un link existente
 export const updateLinks = async (id, links) => {
   const response = await fetch(`${API_URL}/ctram-links/${id}`, {
     method: "PATCH",
@@ -36,8 +44,11 @@ export const updateLinks = async (id, links) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(links),
-    });
-    const data = await response.json();
-    return data;
-}
-
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error updating links: ${response.statusText}, ${errorText}`);
+  }
+  const data = await response.json();
+  return data;
+};
