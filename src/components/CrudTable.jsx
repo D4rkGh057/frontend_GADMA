@@ -37,12 +37,12 @@ const CrudTable = ({
       };
 
       const filtered = data.filter((item) =>
-        fields.some((field) =>
-          getFieldValue(item, field)
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        )
+        fields.some((field) => {
+          const fieldValue = getFieldValue(item, field);
+          return (
+            fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        })
       );
       setFilteredData(filtered);
     } else {
