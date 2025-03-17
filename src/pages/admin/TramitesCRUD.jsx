@@ -59,19 +59,21 @@ export const TramitesCRUD = () => {
       required: true,
     },
     { name: "nombre_tramite", label: "Trámite", type: "text", required: true },
-    { name: "modalidad", label: "Modalidad", type: "select",
+    {
+      name: "modalidad",
+      label: "Modalidad",
+      type: "select",
       options: [
         { value: "Presencial", label: "Presencial" },
-        { value: "En linea", label: "En Linea" },
+        { value: "En Linea", label: "En Linea" },
       ],
-       required: true },
+      required: true,
+    },
   ];
 
   // Función para guardar (crear/editar)
   const handleSave = async (item, isEditing) => {
     try {
-      console.log("Guardando trámite:", item);
-
       if (isEditing) {
         await updateTramite(item.id_tramite, item);
       } else {
@@ -103,7 +105,11 @@ export const TramitesCRUD = () => {
 
   // Función para abrir el modal de edición
   const handleEdit = (item) => {
-    setCurrentItem(item); // Establecer el ítem actual
+    const transformedItem = {
+      ...item,
+      id_direccion_pert: item.id_direccion_pert.id_dir, // Transformar el objeto dirección
+    };
+    setCurrentItem(transformedItem); // Establecer el ítem actual
     setIsEditing(true); // Indicar que estamos en modo edición
     setIsModalOpen(true); // Abrir el modal
   };
@@ -116,7 +122,7 @@ export const TramitesCRUD = () => {
   };
 
   return (
-    <div className="bg-base-100" >
+    <div className="bg-base-100">
       {/* Tabla de trámites */}
       <CrudTable
         title="Gestión de Trámites"
@@ -130,15 +136,22 @@ export const TramitesCRUD = () => {
 
       {/* Modal para crear/editar trámites */}
       <CrudFormModal
-        isOpen={isModalOpen} // Controla si el modal está abierto
-        onClose={() => setIsModalOpen(false)} // Maneja el cierre del modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         isEditing={isEditing}
-        fields={fieldsForm} // Usar fieldsForm para el formulario
+        fields={fieldsForm}
         currentItem={currentItem}
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
           const newItem = {};
+
+          // Si estamos editando, agregamos el id_tramite al objeto newItem
+          if (isEditing && currentItem) {
+            newItem.id_tramite = currentItem.id_tramite;
+          }
+
+          // Llenamos el objeto newItem con los datos del formulario
           fieldsForm.forEach((field) => {
             const fieldNames = field.name.split(".");
             let currentLevel = newItem;
@@ -151,7 +164,9 @@ export const TramitesCRUD = () => {
               }
             });
           });
-          handleSave(newItem, isEditing); // Llama a la función handleSave
+
+          // Llamamos a handleSave con el objeto newItem
+          handleSave(newItem, isEditing);
         }}
       />
     </div>
