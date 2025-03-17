@@ -17,6 +17,7 @@ import {
   RequisitosCRUD,
   TramitesCRUD,
   UsersCRUD,
+  LinksCRUD,
 } from "./pages";
 import { InformacionProvider } from "./context/InformacionProvider";
 
@@ -42,6 +43,7 @@ export const AppRouter = () => {
           <Route path="admin-panel/requisitos" element={<RequisitosCRUD />} />
           <Route path="admin-panel/informacion" element={<InformacionCRUD />} />
           <Route path="admin-panel/formatos" element={<FormatosCRUD />} />
+          <Route path="admin-panel/links" element={<LinksCRUD />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

@@ -31,6 +31,7 @@ export const Navbar = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("token"); // Elimina el token de sessionStorage
     sessionStorage.removeItem("user"); // Elimina el usuario de sessionStorage
+    sessionStorage.removeItem("rol"); // Elimina el rol de sessionStorage
     setLoggedIn(false); // Actualiza el estado a "no autenticado"
     navigate("/login"); // Redirige al usuario a la página de inicio de sesión
   };
