@@ -26,7 +26,6 @@ export const createRequisito = async (requisito) => {
     body: JSON.stringify(requisito),
     });
     const data = await response.json();
-    console.log('gatito',data);
     return data;
 }
 

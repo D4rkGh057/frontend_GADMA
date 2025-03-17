@@ -67,7 +67,7 @@ export const RequisitosCRUD = () => {
         value: dir.id_dir,
         label: dir.nombre,
       })),
-      required: true,
+      required: false,
     },
     {
       name: "id_tramite_pert",
@@ -78,7 +78,7 @@ export const RequisitosCRUD = () => {
         label: tramite.nombre_tramite,
         direccion: tramite.id_direccion_pert.id_dir,
       })),
-      required: true,
+      required: false,
     },
     { name: "descripcion", label: "Descripción", type: "text", required: true },
     {
@@ -96,12 +96,14 @@ export const RequisitosCRUD = () => {
       label: "Nombre del Formato",
       type: "text",
       required: false,
+      editable: false,
     },
     {
       name: "link",
       label: "Link del Formato",
       type: "text",
       required: false,
+      editable: false,
     },
   ];
 
@@ -118,7 +120,7 @@ export const RequisitosCRUD = () => {
   const handleSave = async (item, isEditing) => {
     try {
       // Extraer "nombre_formato" y "link", dejando el resto en "filteredItem"
-      const { nombre_formato, link, direccion, ...filteredItem } = item;
+      const { nombre_formato, link, ...filteredItem } = item;
 
       if (isEditing) {
         await updateRequisito(filteredItem.id_requisito, filteredItem);
@@ -153,7 +155,6 @@ export const RequisitosCRUD = () => {
   // Función para eliminar
   const handleDelete = async (id_requisito) => {
     try {
-      console.log("Eliminando requisito con ID:", id_requisito);
       await deleteRequisito(id_requisito);
       // Recargar datos después de eliminar
       const updatedRequisitos = await getAllRequisitos();
@@ -166,7 +167,14 @@ export const RequisitosCRUD = () => {
 
   // Función para abrir el modal de edición
   const handleEdit = (item) => {
-    setCurrentItem(item); // Establecer el ítem actual
+    const transformedItem = {
+      ...item,
+      direccion: tramites.find(
+        (tramite) => tramite.id_tramite === item.id_tramite_pert.id_tramite
+      ).id_direccion_pert.id_dir,
+      id_tramite_pert: item.id_tramite_pert.id_tramite,
+    };
+    setCurrentItem(transformedItem); // Establecer el ítem actual
     setIsEditing(true); // Indicar que estamos en modo edición
     setIsModalOpen(true); // Abrir el modal
   };
@@ -204,6 +212,10 @@ export const RequisitosCRUD = () => {
           e.preventDefault();
           const formData = new FormData(e.target);
           const newItem = {};
+          //Si estamos editando, agregamos el id_requisito al nuevo item
+          if (isEditing) {
+            newItem.id_requisito = currentItem.id_requisito;
+          }
           fieldsForm.forEach((field) => {
             const fieldNames = field.name.split(".");
             let currentLevel = newItem;
