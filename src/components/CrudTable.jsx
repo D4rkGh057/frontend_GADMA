@@ -27,18 +27,22 @@ const CrudTable = ({
   // Filtrar datos en función del término de búsqueda
   useEffect(() => {
     if (searchTerm) {
+      const getFieldValue = (item, field) => {
+        const fieldNames = field.name.split(".");
+        let value = item;
+        fieldNames.forEach((name) => {
+          value = value ? value[name] : "";
+        });
+        return value;
+      };
+
       const filtered = data.filter((item) =>
-        fields.some((field) => {
-          const fieldNames = field.name.split(".");
-          let value = item;
-          fieldNames.forEach((name) => {
-            value = value ? value[name] : "";
-          });
-          return value
+        fields.some((field) =>
+          getFieldValue(item, field)
             .toString()
             .toLowerCase()
-            .includes(searchTerm.toLowerCase());
-        })
+            .includes(searchTerm.toLowerCase())
+        )
       );
       setFilteredData(filtered);
     } else {
@@ -80,11 +84,25 @@ const CrudTable = ({
   // Función para generar los botones de paginación
   const renderPaginationButtons = () => {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const buttons = [];
     const maxButtons = 5;
 
-    // Botón "Anterior"
-    buttons.push(
+    const renderPageButton = (pageNumber, isActive = false) => (
+      <button
+        key={pageNumber}
+        onClick={() => paginate(pageNumber)}
+        className={`join-item btn ${isActive ? "btn-active" : ""}`}
+      >
+        {pageNumber}
+      </button>
+    );
+
+    const renderEllipsis = (key) => (
+      <button key={key} className="join-item btn btn-disabled">
+        ...
+      </button>
+    );
+
+    const renderPrevButton = () => (
       <button
         key="prev"
         onClick={() => paginate(currentPage - 1)}
@@ -95,80 +113,7 @@ const CrudTable = ({
       </button>
     );
 
-    // Botones de página
-    if (totalPages <= maxButtons) {
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => paginate(i)}
-            className={`join-item btn bg-base-300 ${currentPage === i ? "btn-active" : ""}`}
-          >
-            {i}
-          </button>
-        );
-      }
-    } else {
-      if (currentPage > 2) {
-        buttons.push(
-          <button
-            key={1}
-            onClick={() => paginate(1)}
-            className={`join-item btn bg-base-300 ${currentPage === 1 ? "btn-active" : ""}`}
-          >
-            1
-          </button>
-        );
-        if (currentPage > 3) {
-          buttons.push(
-            <button key="ellipsis-start" className="join-item btn bg-base-300 btn-disabled">
-              ...
-            </button>
-          );
-        }
-      }
-
-      // Botones alrededor de la página actual
-      for (
-        let i = Math.max(1, currentPage - 1);
-        i <= Math.min(totalPages, currentPage + 1);
-        i++
-      ) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => paginate(i)}
-            className={`join-item btn ${currentPage === i ? "btn-active" : ""}`}
-          >
-            {i}
-          </button>
-        );
-      }
-
-      if (currentPage < totalPages - 1) {
-        if (currentPage < totalPages - 2) {
-          buttons.push(
-            <button key="ellipsis-end" className="join-item btn btn-disabled">
-              ...
-            </button>
-          );
-        }
-        buttons.push(
-          <button
-            key={totalPages}
-            onClick={() => paginate(totalPages)}
-            className={`join-item btn ${
-              currentPage === totalPages ? "btn-active" : ""
-            }`}
-          >
-            {totalPages}
-          </button>
-        );
-      }
-    }
-
-    // Botón "Siguiente"
-    buttons.push(
+    const renderNextButton = () => (
       <button
         key="next"
         onClick={() => paginate(currentPage + 1)}
@@ -179,7 +124,49 @@ const CrudTable = ({
       </button>
     );
 
-    return buttons;
+    const renderPageButtons = () => {
+      const buttons = [];
+      if (totalPages <= maxButtons) {
+        for (let i = 1; i <= totalPages; i++) {
+          buttons.push(renderPageButton(i, currentPage === i));
+        }
+      } else {
+        addStartButtons(buttons);
+        addMiddleButtons(buttons);
+        addEndButtons(buttons);
+      }
+      return buttons;
+    };
+
+    const addStartButtons = (buttons) => {
+      if (currentPage > 2) {
+        buttons.push(renderPageButton(1, currentPage === 1));
+        if (currentPage > 3) {
+          buttons.push(renderEllipsis("ellipsis-start"));
+        }
+      }
+    };
+
+    const addMiddleButtons = (buttons) => {
+      for (
+        let i = Math.max(1, currentPage - 1);
+        i <= Math.min(totalPages, currentPage + 1);
+        i++
+      ) {
+        buttons.push(renderPageButton(i, currentPage === i));
+      }
+    };
+
+    const addEndButtons = (buttons) => {
+      if (currentPage < totalPages - 1) {
+        if (currentPage < totalPages - 2) {
+          buttons.push(renderEllipsis("ellipsis-end"));
+        }
+        buttons.push(renderPageButton(totalPages, currentPage === totalPages));
+      }
+    };
+
+    return [renderPrevButton(), ...renderPageButtons(), renderNextButton()];
   };
 
   return (
