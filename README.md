@@ -101,7 +101,7 @@ Este proyecto está bajo la licencia MIT. Para más detalles, consulta el archiv
 ## Contacto 📧
 Si tienes alguna pregunta o sugerencia, no dudes en contactarme:
 
-- **Email:** (Agrega tu correo electrónico).
+- **Email:** [danielfuelpaz@outlook.com](danielfuelpaz@outlook.com).
 - **GitHub:** [D4rkGh057](https://github.com/D4rkGh057).
 
 ¡Gracias por visitar el proyecto! 🚀
