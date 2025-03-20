@@ -17,8 +17,7 @@ SmarTramites es una plataforma web desarrollada para el **Gobierno Autónomo Des
 
 - **Frontend**: React, HTML, CSS, JavaScript.
 - **Backend**: NestJS, TypeScript.
-- **Base de datos**: (Especifica aquí la base de datos utilizada, por ejemplo, PostgreSQL, MySQL, etc.).
-- **Otras herramientas**: (Agrega aquí otras herramientas o librerías que hayas utilizado, como Docker, Git, etc.).
+- **Base de datos**: Oracle Express
 
 ---
 
@@ -27,7 +26,6 @@ SmarTramites es una plataforma web desarrollada para el **Gobierno Autónomo Des
 ### Requisitos previos
 - Node.js (v16 o superior)
 - npm o yarn
-- (Agrega aquí otros requisitos, como una base de datos o servicios externos).
 
 ### Pasos para ejecutar el proyecto
 
