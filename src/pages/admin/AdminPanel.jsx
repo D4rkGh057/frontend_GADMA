@@ -1,9 +1,10 @@
 import React from "react";
 import fondo from "../../assets/municipalidadSUR1.webp";
+import { isTokenValid } from "../../services/authServices";
 
 export const AdminPanel = () => {
 
-  if (!sessionStorage.getItem("token")) {
+  if (!sessionStorage.getItem("token") && !isTokenValid(sessionStorage.getItem("token"))) {
     window.location.href = "/login"; // Redirige al usuario al login si no está autenticado
   }
   const user = sessionStorage.getItem("user")?.replace(/['"]+/g, ""); // Obtiene el usuario del sessionStorage

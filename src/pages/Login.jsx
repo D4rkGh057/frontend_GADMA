@@ -1,32 +1,40 @@
 import React, { useState } from "react";
 import fondo from "../assets/municipalidadSUR1.webp"; // Importa la imagen
-import { getRoleFromToken, getUserFromToken, login } from "../services/authServices";
+import {
+  getRoleFromToken,
+  getUserFromToken,
+  login,
+} from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const cedula = e.target.cedula.value;
-  const password = e.target.password.value;
+    e.preventDefault();
+    const cedula = e.target.cedula.value;
+    const password = e.target.password.value;
 
-  try {
-    const data = await login(cedula, password);
-    sessionStorage.setItem("token", data.access_token);
+    try {
+      const data = await login(cedula, password);
+      if (!data.access_token) {
+        alert("Credenciales incorrectas. Por favor, intenta de nuevo.");
+      } else {
+        sessionStorage.setItem("token", data.access_token);
 
-    const user = getUserFromToken(data.access_token);
-    sessionStorage.setItem("user", JSON.stringify(user));
+        const user = getUserFromToken(data.access_token);
+        sessionStorage.setItem("user", JSON.stringify(user));
 
-    const rol = getRoleFromToken(data.access_token);
-    sessionStorage.setItem("rol", JSON.stringify(rol));
+        const rol = getRoleFromToken(data.access_token);
+        sessionStorage.setItem("rol", JSON.stringify(rol));
 
-    navigate("/admin-panel");
-  } catch (error) {
-    console.error("Login failed:", error);
-    alert("Credenciales incorrectas. Por favor, intenta de nuevo.");
-  }
-};
+        navigate("/admin-panel");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Credenciales incorrectas. Por favor, intenta de nuevo.");
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
